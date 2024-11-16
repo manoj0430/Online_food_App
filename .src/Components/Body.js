@@ -1,8 +1,8 @@
 import RestaurantCard from "./RestaurantCard";
-import resList from "../utils/MockData";
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import useOnlineStatus from "../utils/useOnlineStatus";
 const Body = () => {
   const [listOfRestaurants, setListOfRestaurants] = useState([]);
   const [filteredRestaurant, setFilteredRestaurant] = useState([]);
@@ -26,6 +26,15 @@ const Body = () => {
       json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
   };
+
+  const onlineStatus = useOnlineStatus();
+
+  if (onlineStatus === false)
+    return (
+      <h1>
+        Looks like your are offline, please check your internet connection
+      </h1>
+    );
 
   if (listOfRestaurants.length === 0) {
     return <h1>Loading</h1>;
