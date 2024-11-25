@@ -1,8 +1,9 @@
 import RestaurantCard from "./RestaurantCard";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
+import UserContext from "../utils/UserContext";
 const Body = () => {
   const [listOfRestaurants, setListOfRestaurants] = useState([]);
   const [filteredRestaurant, setFilteredRestaurant] = useState([]);
@@ -18,7 +19,7 @@ const Body = () => {
     );
 
     const json = await data.json();
-    console.log(json);
+
     setListOfRestaurants(
       json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
@@ -27,6 +28,7 @@ const Body = () => {
     );
   };
 
+  const { loggedInUser, setUserName } = useContext(UserContext);
   const onlineStatus = useOnlineStatus();
 
   if (onlineStatus === false)
@@ -41,11 +43,12 @@ const Body = () => {
   }
   return (
     <div className="body">
-      <div className="filter">
-        <div className="search">
+      {/* Search Container */}
+      <div className="flex ml-72">
+        <div className="m-4 p-2">
           <input
             type="text"
-            className="search-box"
+            className="border border-solid border-gray-600 rounded-2xl m-4"
             value={searchText}
             onChange={(e) => {
               setSearchText(e.target.value);
@@ -60,12 +63,13 @@ const Body = () => {
               });
               setFilteredRestaurant(filteredRestaurant);
             }}
+            className="m-4 px-3 py-1 text-sm bg-orange-300 rounded-xl"
           >
             Search
           </button>
         </div>
         <button
-          className="filter-btn"
+          className="filter-btn bg-red-400 h-6 px-3 rounded-xl text-m my-auto"
           onClick={() => {
             const filterLogic = listOfRestaurants.filter(
               (res) => res.info.avgRating > 4
@@ -75,8 +79,16 @@ const Body = () => {
         >
           Top Rated Restaurants
         </button>
+
+        <label className="mx-6 my-auto">UserName</label>
+        <input
+          className="border border-black h-6 px-3 my-auto"
+          value={loggedInUser}
+          onChange={(e) => setUserName(e.target.value)}
+        />
       </div>
-      <div className="res-container">
+
+      <div className="flex flex-wrap p-10 w-5/6 m-auto">
         {filteredRestaurant.map((restaurant) => (
           <Link
             key={restaurant.info.id}
